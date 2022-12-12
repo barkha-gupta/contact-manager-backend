@@ -43,7 +43,8 @@ const FileStorage = multer.diskStorage({
   
   router.post("/contactpost", upload.single("file"), async (req, res) => {
     // console.log(req.file);
-    const file = req.file;
+    try {
+      const file = req.file;
     await csvtojson()
       .fromFile(`./public/uploads/${file.filename}`)
       .then((csvdata) => {
@@ -73,6 +74,13 @@ const FileStorage = multer.diskStorage({
           message: "file not uploaded",
         });
       }
+    } catch (error) {
+      res.status(400).json({
+        status: "Bad request",
+        message: e.message
+    })
+    }
+    
   });
 
 router.post("/create", async (req, res) => {
